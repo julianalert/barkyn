@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Barkyn x AI Photography</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --cream: #f7f4ef;
+    --warm-dark: #2a2420;
+    --coral: #e8604a;
+    --green: #7ec89a;
+    --yellow: #f0d060;
+    --muted: #7a7068;
+    --border: rgba(42,36,32,0.1);
+  }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--warm-dark); font-size: 16px; line-height: 1.6; }
+
+  /* COVER */
+  .cover {
+    height: 100vh;
+    min-height: 600px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr;
+    overflow: hidden;
+    background: var(--warm-dark);
+  }
+
+  .cover-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 60px 8%;
+    position: relative;
+    z-index: 2;
+  }
+
+  .cover-eyebrow {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--coral);
+    margin-bottom: 24px;
+  }
+
+  .cover h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(36px, 4.5vw, 64px);
+    line-height: 1.05;
+    color: #f7f4ef;
+    margin-bottom: 20px;
+  }
+
+  .cover h1 em { font-style: italic; color: var(--coral); }
+
+  .cover-sub {
+    font-size: 15px;
+    color: rgba(247,244,239,0.55);
+    max-width: 380px;
+    line-height: 1.7;
+    margin-bottom: 40px;
+  }
+
+  .cover-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-top: 32px;
+    border-top: 1px solid rgba(247,244,239,0.12);
+  }
+
+  .cover-meta-row {
+    display: flex;
+    gap: 6px;
+    font-size: 13px;
+  }
+
+  .cover-meta-label { color: rgba(247,244,239,0.35); min-width: 110px; }
+  .cover-meta-value { color: rgba(247,244,239,0.75); }
+
+  /* RIGHT SIDE: PHOTO GRID */
+  .cover-right {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 3px;
+    overflow: hidden;
+  }
+
+  .cover-thumb {
+    overflow: hidden;
+    position: relative;
+    background: #1a1410;
+  }
+
+  .cover-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    opacity: 0.88;
+    transition: opacity 0.3s;
+  }
+
+  .cover-thumb:hover img { opacity: 1; }
+
+  /* tall first cell spans 2 rows */
+  .cover-thumb.tall { grid-row: span 2; }
+
+  /* SECTIONS */
+  section { padding: 90px 8%; }
+  section:nth-child(even) { background: #f0ece4; }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--coral);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-label::after { content: ''; display: inline-block; width: 28px; height: 1px; background: var(--coral); }
+
+  h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(28px, 3.5vw, 46px);
+    line-height: 1.15;
+    font-weight: 400;
+    max-width: 580px;
+    margin-bottom: 20px;
+  }
+
+  .body-text { font-size: 15px; color: var(--muted); max-width: 560px; line-height: 1.8; }
+
+  /* SHOT DETAILS */
+  .shot-detail {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 70px;
+    align-items: center;
+    margin-top: 70px;
+  }
+  .shot-detail.reverse { direction: rtl; }
+  .shot-detail.reverse > * { direction: ltr; }
+
+  .shot-detail-image { overflow: hidden; }
+  .shot-detail-image img { width: 100%; height: 480px; object-fit: cover; display: block; }
+
+  .shot-number {
+    font-family: 'DM Serif Display', serif;
+    font-size: 72px;
+    color: rgba(42,36,32,0.06);
+    line-height: 1;
+    margin-bottom: -14px;
+  }
+
+  .shot-detail-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 27px;
+    font-weight: 400;
+    margin-bottom: 14px;
+    line-height: 1.2;
+  }
+
+  .shot-detail-type {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 100px;
+    margin-bottom: 18px;
+  }
+
+  .tag-conceptual { background: #fde8e3; color: #c0392b; }
+  .tag-product { background: #e8f8f1; color: #0a6b44; }
+  .tag-lifestyle { background: #fdf3e0; color: #7a4f00; }
+  .tag-emotional { background: #f5eeff; color: #533AB7; }
+  .tag-branded { background: #e8f4f8; color: #1a6080; }
+  .tag-editorial { background: #f0ece4; color: #5a4a3a; }
+
+  .shot-detail-desc { font-size: 15px; color: var(--muted); line-height: 1.8; margin-bottom: 24px; }
+
+  .use-cases { display: flex; flex-wrap: wrap; gap: 7px; }
+  .use-tag { font-size: 12px; color: var(--muted); border: 1px solid var(--border); padding: 4px 11px; border-radius: 100px; }
+
+  .divider { height: 1px; background: var(--border); margin: 60px 0; }
+
+  /* NEXT STEPS */
+  .next-steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: var(--border); margin-top: 50px; }
+  .next-step { background: var(--cream); padding: 36px 28px; }
+  .step-num { font-family: 'DM Serif Display', serif; font-size: 44px; color: var(--coral); opacity: 0.35; line-height: 1; margin-bottom: 14px; }
+  .step-title { font-size: 16px; font-weight: 500; margin-bottom: 10px; }
+  .step-desc { font-size: 14px; color: var(--muted); line-height: 1.7; }
+
+  /* FOOTER */
+  footer { background: var(--warm-dark); padding: 50px 8%; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+  .footer-brand { font-family: 'DM Serif Display', serif; font-size: 22px; color: #f7f4ef; }
+  .footer-brand span { color: var(--coral); }
+  .footer-contact { font-size: 13px; color: rgba(247,244,239,0.4); }
+
+  @media (max-width: 900px) {
+    .cover { grid-template-columns: 1fr; height: auto; }
+    .cover-left { padding: 60px 6% 40px; }
+    .cover-right { height: 50vw; grid-template-rows: 1fr; }
+    .cover-thumb.tall { grid-row: span 1; }
+    section { padding: 60px 6%; }
+    .shot-detail { grid-template-columns: 1fr; gap: 36px; }
+    .shot-detail.reverse { direction: ltr; }
+    .shot-detail-image img { height: 320px; }
+    .next-steps-grid { grid-template-columns: 1fr; }
+    footer { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER: left text + right photo grid, fits in viewport -->
+<div class="cover">
+  <div class="cover-left">
+    <div class="cover-eyebrow">AI Creative Photshoot · Photo Preview</div>
+    <h1>What <em>Barkyn</em> could look like</h1>
+    <p class="cover-sub">A first batch of AI-generated product photography, built from your brief, your products, and your brand direction.</p>
+    <div class="cover-meta">
+      <div class="cover-meta-row">
+        <span class="cover-meta-label">Prepared for</span>
+        <span class="cover-meta-value">Sofia, Head of Brand at Barkyn</span>
+      </div>
+      <div class="cover-meta-row">
+        <span class="cover-meta-label">Photos delivered</span>
+        <span class="cover-meta-value">6 shots across 4 categories</span>
+      </div>
+      <div class="cover-meta-row">
+        <span class="cover-meta-label">Markets</span>
+        <span class="cover-meta-value">PT · ES · IT</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3x2 photo grid on the right, all 6 photos visible -->
+  <div class="cover-right">
+    <div class="cover-thumb tall">
+      <img src="images/_photo1.png" alt="Dog with full product range" />
+    </div>
+    <div class="cover-thumb">
+      <img src="images/_photo3.png" alt="Falling ingredients" />
+    </div>
+    <div class="cover-thumb">
+      <img src="images/_photo4.png" alt="Topping flatlay" />
+    </div>
+    <div class="cover-thumb">
+      <img src="images/_photo5.png" alt="Fresh pour" />
+    </div>
+    <div class="cover-thumb">
+      <img src="images/_photo6.png" alt="Dog and topping box" />
+    </div>
+  </div>
+</div>
+
+<!-- SHOT BY SHOT -->
+<section>
+  <div class="section-label">Shot by shot</div>
+  <h2>The creative direction behind each image</h2>
+
+  <!-- Shot 01: dog + all products -->
+  <div class="shot-detail">
+    <div class="shot-detail-image">
+      <img src="images/_photo5.png" alt="Dog with all Barkyn products on terracotta surface" />
+    </div>
+    <div class="shot-detail-content">
+      <div class="shot-number">01</div>
+      <div class="shot-detail-type tag-lifestyle">Lifestyle · Full brand scene</div>
+      <h3 class="shot-detail-title">The full Barkyn world in one frame</h3>
+      <p class="shot-detail-desc">A Golden Retriever sits upright and engaged behind a warm terracotta table holding all three Barkyn products: the fresh yellow box centre-back, the coral Beef topping to the left and the sage Chicken topping to the right. The real Barkyn taupe bowl filled with fresh food sits in the foreground, surrounded by a whole carrot, broccoli, scattered peas and a sprig of rosemary. Dappled natural light falls across a sage green wall behind the dog. Every product label is readable. The complete Barkyn longevity plan in a single shot.</p>    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Shot 02: falling ingredients -->
+  <div class="shot-detail reverse">
+    <div class="shot-detail-image">
+      <img src="images/_photo1.png" alt="Fresh ingredients suspended mid-fall above Barkyn bowl on cream background" />
+    </div>
+    <div class="shot-detail-content">
+      <div class="shot-number">02</div>
+      <div class="shot-detail-type tag-conceptual">Conceptual · Brand aura</div>
+      <h3 class="shot-detail-title">Only real ingredients, falling into your dog's bowl</h3>
+      <p class="shot-detail-desc">Broccoli, two carrot rounds, a chunk of sweet potato, a rosemary sprig, a cluster of peas and a raw chicken cube all hang suspended mid-fall above a cream ceramic bowl already filled with Barkyn fresh food. Clean warm ivory background, nothing else. No branding needed: the ingredients make the entire argument. This is the conceptual shot from your brief that communicates "only good stuff goes in here" at a glance.</p>    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Shot 03: topping flatlay -->
+  <div class="shot-detail">
+    <div class="shot-detail-image">
+      <img src="images/_photo4.png" alt="Multiple hands holding Chicken topping boxes on sage green background" />
+    </div>
+    <div class="shot-detail-content">
+      <div class="shot-number">03</div>
+      <div class="shot-detail-type tag-branded">Branded · DTC flatlay</div>
+      <h3 class="shot-detail-title">Topping · the brand confidence shot</h3>
+      <p class="shot-detail-desc">Five hands enter the frame from every direction, each holding a Barkyn Chicken with Krill and Omega-3 topping box. The background is the exact same sage green as the box itself, creating a bold monochrome effect where only the white "food topping" and teal "Barkyn" typography cut through. Hard directional shadows from a single overhead light source give it graphic punch. This is the kind of image that builds instant brand recognition and stops people mid-scroll.</p>    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Shot 04: fresh pouring from pack -->
+  <div class="shot-detail reverse">
+    <div class="shot-detail-image">
+      <img src="images/_photo3.png" alt="Hand pouring Barkyn fresh inner pack into bowl with yellow box and fresh ingredients" />
+    </div>
+    <div class="shot-detail-content">
+      <div class="shot-number">04</div>
+      <div class="shot-detail-type tag-product">Product in use · Fresh</div>
+      <h3 class="shot-detail-title">From pack to bowl, no effort required</h3>
+      <p class="shot-detail-desc">A hand tips the Barkyn fresh inner transparent pouch directly into the Barkyn ceramic bowl. The food, visibly packed with carrot rounds, peas, rice and chicken, cascades naturally mid-pour. The yellow Barkyn fresh box stands upright to the left, label fully readable. A whole carrot lies on the surface to the left, a fresh parsley sprig sits to the right. This shot directly communicates the core product promise: no fridge, no freezer, no cooking. Just open the pack and serve.</p>    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Shot 05: dog lying behind topping box -->
+  <div class="shot-detail">
+    <div class="shot-detail-image">
+      <img src="images/_photo6.png" alt="Labrador lying on wooden floor with coral Beef topping box in foreground" />
+    </div>
+    <div class="shot-detail-content">
+      <div class="shot-number">05</div>
+      <div class="shot-detail-type tag-product">Product · Lifestyle</div>
+      <h3 class="shot-detail-title">The dog already knows what is in that box</h3>
+      <p class="shot-detail-desc">The coral Barkyn Beef with Collagen topping box sits sharp and front-facing on a warm wooden floor. Behind it, a Labrador lies with chin low and eyes forward, completely focused on the box. Shot in a real home environment with a rug and natural ambient light in the background. The dog does all the selling. No copy needed: any dog owner looking at this image immediately recognises that look.</p>    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Shot 06: hand + snout feeding -->
+  <div class="shot-detail reverse">
+    <div class="shot-detail-image">
+      <img src="images/_photo8.png" alt="Hand holding bowl while dog eats, bowl contains kibble, fresh food and topping drizzle" />
+    </div>
+    <div class="shot-detail-content">
+      <div class="shot-number">06</div>
+      <div class="shot-detail-type tag-emotional">Feeding shot · Emotional</div>
+      <h3 class="shot-detail-title">The Barkyn bowl, in action</h3>
+      <p class="shot-detail-desc">A hand holds the large cream Barkyn ceramic bowl from below while a dog dips its snout in to eat, tongue visible. The bowl contains the full Barkyn longevity stack: dark kibble on one side, fresh food with carrot rounds on the other, and the liquid topping already drizzled across both. Only the hand, bowl and the dog's lower face are visible. Close, warm and unposed. This is the feeding shot from your brief, shot from the perspective of the person holding the bowl, capturing the moment that matters every day.</p>    </div>
+  </div>
+
+</section>
+
+<!-- NEXT STEPS -->
+<section>
+  <div class="section-label">What happens next</div>
+  <h2>If this feels right, here is how we move forward</h2>
+  <div class="next-steps-grid">
+    <div class="next-step">
+      <div class="step-num">01</div>
+      <div class="step-title">Align on creative direction</div>
+      <p class="step-desc">A 30-minute call to confirm which shots land, what to adjust, and define how we will work together.</p>
+    </div>
+    <div class="next-step">
+      <div class="step-num">02</div>
+      <div class="step-title">Full batch production</div>
+      <p class="step-desc">We produce all the photos from a final brief based on your needs.</p>
+    </div>
+    <div class="next-step">
+      <div class="step-num">03</div>
+      <div class="step-title">Delivery and iterations</div>
+      <p class="step-desc">All images delivered in 4K, formatted for PDPs, web and socials. Includes one round of revisions per shot on colour, composition, and crop.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">Julian <span>x</span> Barkyn</div>
+  <div class="footer-contact">AI Creative Partner</div>
+</footer>
+
+</body>
+</html>
